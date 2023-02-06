@@ -1,7 +1,10 @@
 [![NuGet](https://zakharovopen.ru/webapp/ApiPyrus.svg)](https://www.nuget.org/packages/ApiPyrus/)
-
 # ApiPyrus
 This is C# Pyrus API client. This library allows to use all available API methods.
+## Install
+``` bash
+PM> NuGet\Install-Package ApiPyrus -Version 2.0.1
+```
 ## Create instance
 ```C#
 using ApiPyrus;
