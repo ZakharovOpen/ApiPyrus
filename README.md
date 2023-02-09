@@ -19,24 +19,34 @@ using ApiPyrus;
 ...
 ApiClient apiClient = new ApiClient("login", "apiKey");
 ```
-## Create get tasks request
-```C#
-using ApiPyrus.Models.DTOs;
-...
-PyrusTasks pyrusTasks = apiClient.GetTasks(123456, "?fld4=343&fld10=79991112233");
-```
-## Create get catalogs request
+## Get catalogs request
 ```C#
 using ApiPyrus.Models.DTOs;
 ...
 PyrusCatalogs catalogs = apiClient.GetСatalogs();
 ```
+## Create catalog request
+```C#
+using ApiPyrus.Models.DTOs;
+using ApiPyrus.Models.Methods.Catalogs;
+...
+Catalog newCatalog = new CreateCatalog("Created new catalog").AddHeaders(new List<string>() { "Name", "LastName" }).AddItems(new List<ValuesList>() { new ValuesList() { Values = new List<string>() { "Pavel", "Zakharov" } } }).Send(apiClient);
+```
+![image](https://user-images.githubusercontent.com/88644943/217810505-cef36e03-332f-46ee-a0c5-c93ecb6aa81c.png)
+
+
 ## Attachments
 ```C#
 using ApiPyrus.Models.DTOs;
 ...
 bool success = apiClient.DownloadFiles("https://pyrus.com/services/attachment?id=12345678", "C:\\Files\\File1.png");
 Guid attachmentId = await apiClient.UploadDataAsync("C:\\Files\\File1.png");
+```
+## Get tasks request
+```C#
+using ApiPyrus.Models.DTOs;
+...
+PyrusTasks pyrusTasks = apiClient.GetTasks(123456, "?fld4=343&fld10=79991112233");
 ```
 ## Create task
 ```C#
