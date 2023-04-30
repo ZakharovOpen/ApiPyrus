@@ -1,17 +1,17 @@
 ```.NET Framework 4.7.2```
-[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus.svg)](https://www.nuget.org/packages/ApiPyrus/2.0.3)<br />
+[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus.svg)](https://www.nuget.org/packages/ApiPyrus/2.1.0)<br />
  ```.NET 6.0```
-[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus_net6.svg)](https://www.nuget.org/packages/ApiPyrus/3.0.3)
+[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus_net6.svg)](https://www.nuget.org/packages/ApiPyrus/3.1.0)
 # ApiPyrus
 This is C# Pyrus API client. This library allows to use all available API methods.
 ## Install
 #### .NET Framework 4.7.2
 ``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 2.0.3
+PM> NuGet\Install-Package ApiPyrus -Version 2.1.0
 ```
 #### .NET 6.0
 ``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 3.0.3
+PM> NuGet\Install-Package ApiPyrus -Version 3.1.0
 ```
 ## Create instance
 ```C#
@@ -63,4 +63,4 @@ using ApiPyrus.Models.Methods.Tasks;
  PyrusTask updatedTask = new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
 ```
 
-P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance. "ValueField" can be different object, details https://pyrus.com/en/help/api/fields .
+P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance. "ValueField" can be different object, details https://pyrus.com/en/help/api/fields. Each Field and Cell entity has a 'GetValueObject' method that returns an object (IValue). 
