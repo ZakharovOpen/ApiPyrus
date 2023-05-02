@@ -1,0 +1,3 @@
+[3.1.0] [2.1.0] - 01.05.2023
+Added
+- method to get 'value' object(IValue) for feilds and cells
