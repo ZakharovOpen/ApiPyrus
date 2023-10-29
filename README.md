@@ -1,17 +1,11 @@
-```.NET Framework 4.7.2```
-[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus.svg)](https://www.nuget.org/packages/ApiPyrus/2.1.0)<br />
- ```.NET 6.0```
-[![NuGet](https://zakharovopen.ru/webapp/ApiPyrus_net6.svg)](https://www.nuget.org/packages/ApiPyrus/3.1.0)
+ ```.NET STANDART 2.0```
+[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.0.1)
 # ApiPyrus
 This is C# Pyrus API client. This library allows to use all available API methods.
 ## Install
-#### .NET Framework 4.7.2
+#### .NET Standart 2.0
 ``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 2.1.0
-```
-#### .NET 6.0
-``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 3.1.0
+PM> NuGet\Install-Package ApiPyrus -Version 4.0.1
 ```
 ## Create instance
 ```C#
