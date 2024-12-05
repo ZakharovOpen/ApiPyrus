@@ -1,5 +1,5 @@
  ```.NET STANDART 2.0```
-[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.4.0)
+[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.6.0)
 # ApiPyrus
 This is C# Pyrus API client. This library allows to use all available API methods.
 ## Install
@@ -55,6 +55,52 @@ using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Tasks;
 ...
  PyrusTask updatedTask = new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
+```
+## Field
+The field has the following methods:
+```C#
+public T GetValue<T>() where T : IValue
+public IValue GetValueObject()
+```
+
+
+## Extentions
+Extension methods have been added to the library.
+```C#
+ public static string GetJson<T>(this T entityForJson, Formatting jsonFormatting = Formatting.Indented, NullValueHandling nullValueHandling = NullValueHandling.Ignore, DefaultValueHandling defaultValueHandling = DefaultValueHandling.Ignore, ReferenceLoopHandling referenceLoopHandling = ReferenceLoopHandling.Ignore)
+...
+ public static string GetJson<T>(this T entityForJson, JsonSerializerSettings settings)
+...
+ public static bool TryGetFieldById(this PyrusTask task, long fieldId, out Field field)
+...
+ public static bool TryGetFieldById(this List<Field> fields, long fieldId, out Field field)
+...
+ public static bool TryGetFieldsByType(this PyrusTask task, FieldTypes type, out List<Field> fields)
+...
+ public static bool TryGetFieldsByType(this List<Field> fields, FieldTypes type, out List<Field> fieldsByType)
+        
+
+```
+Example:
+```C#
+using ApiPyrus.Extentions;
+...
+  PyrusTask task = new PyrusTask();
+  var taskJson = task.GetJson();
+  var fieldsJson = task.Fields.GetJson(Formatting.None);
+...
+  if(task.Fields.TryGetFieldById(3, out Field field))
+  {
+     Console.WriteLine(field.GetValue<ValueString>());
+  }
+...
+  if (task.Fields.TryGetFieldsByType(FieldTypes.Text, out List<Field> fields))
+  {
+    foreach (var field in fields)
+    {
+        Console.WriteLine(field.GetValue<ValueString>());
+    }
+  }
 ```
 
 P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance. "ValueField" can be different object, details https://pyrus.com/en/help/api/fields. Each Field and Cell entity has a 'GetValueObject' method that returns an object (IValue). 
