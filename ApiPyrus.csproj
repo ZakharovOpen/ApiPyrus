@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <AssemblyVersion>4.6.1</AssemblyVersion>
+    <FileVersion>4.6.1</FileVersion>
+    <IsPublishable>True</IsPublishable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>ApiPyrus</Title>
+    <Authors>Zakharov Pavel</Authors>
+    <Company>ZakharovOpen</Company>
+    <Description>Pyrus api client</Description>
+    <PackageProjectUrl>https://github.com/ZakharovOpen/ApiPyrus</PackageProjectUrl>
+    <PackageIcon>pyrus_icon.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>pyrus api zakharov pyrus.com PyrusAPI</PackageTags>
+    <PackageReleaseNotes>Moved project to Net.Standart 2.0
+Added sended </PackageReleaseNotes>
+    <Version>4.6.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="pyrus_icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
