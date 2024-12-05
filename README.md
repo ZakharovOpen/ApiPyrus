@@ -1,5 +1,5 @@
  ```.NET STANDART 2.0```
-[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.6.0)
+[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.6.1)
 # ApiPyrus
 This is C# Pyrus API client. This library allows to use all available API methods.
 ## Install
@@ -68,16 +68,17 @@ public IValue GetValueObject()
 ## Extentions
 Extension methods have been added to the library.
 ```C#
- public static string GetJson<T>(this T entityForJson, Formatting jsonFormatting = Formatting.Indented, NullValueHandling nullValueHandling = NullValueHandling.Ignore, DefaultValueHandling defaultValueHandling = DefaultValueHandling.Ignore, ReferenceLoopHandling referenceLoopHandling = ReferenceLoopHandling.Ignore)
-...
  public static string GetJson<T>(this T entityForJson, JsonSerializerSettings settings)
-...
+ public static string GetJson<T>(this T entityForJson, Formatting jsonFormatting = Formatting.Indented, NullValueHandling nullValueHandling = NullValueHandling.Ignore, DefaultValueHandling defaultValueHandling = DefaultValueHandling.Ignore, ReferenceLoopHandling referenceLoopHandling = ReferenceLoopHandling.Ignore)
+ 
+ public static Field GetFieldById(this PyrusTask task, long fieldId)
+ public static Field GetFieldById(this List<Field> fields, long fieldId)
  public static bool TryGetFieldById(this PyrusTask task, long fieldId, out Field field)
-...
  public static bool TryGetFieldById(this List<Field> fields, long fieldId, out Field field)
-...
+
+ public static List<Field> GetFieldsByType(this PyrusTask task, FieldTypes type)
+ public static List<Field> GetFieldsByType(this List<Field> fields, FieldTypes type)
  public static bool TryGetFieldsByType(this PyrusTask task, FieldTypes type, out List<Field> fields)
-...
  public static bool TryGetFieldsByType(this List<Field> fields, FieldTypes type, out List<Field> fieldsByType)
         
 
