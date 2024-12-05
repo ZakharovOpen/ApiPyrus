@@ -57,7 +57,8 @@ using ApiPyrus.Models.Methods.Tasks;
  PyrusTask updatedTask = new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
 ```
 ## Field
-The field has the following methods:
+Field value can be differents objects, details https://pyrus.com/en/help/api/fields.
+The field has the following methods to get it:
 ```C#
 public T GetValue<T>() where T : IValue
 public IValue GetValueObject()
@@ -103,4 +104,4 @@ using ApiPyrus.Extentions;
   }
 ```
 
-P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance. "ValueField" can be different object, details https://pyrus.com/en/help/api/fields. Each Field and Cell entity has a 'GetValueObject' method that returns an object (IValue). 
+P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance.
