@@ -63,7 +63,23 @@ The field has the following methods to get it:
 public T GetValue<T>() where T : IValue
 public IValue GetValueObject()
 ```
-
+## IValue
+ValueClasses for fields types [enum FieldTypes]:
+ - ValueString [Text, Phone, Time, Note, Email]
+ - ValueDate [DueDate, CreationDate, Date, DueDateTime]
+ - ValueNumber [Money, Number]
+ - ValueProject [Project]
+ - ValueFormLink [FormLink]
+ - ValueTitle [Title]
+ - ValueMultipleChoice [MultipleChoice]
+ - ValueTable [Table]
+ - ValuePersone [Author, Person]
+ - ValueFiles [File]
+ - ValueCatalog [Catalog]
+ - ValueCheckmark [Checkmark, Flag]
+ - ValueIntegerNumber [Step]
+ - ValueStatus [Status]
+ If a conversion error occurs, then 'ValueError'
 
 ## Extentions
 Extension methods have been added to the library.
