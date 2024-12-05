@@ -5,7 +5,7 @@ This is C# Pyrus API client. This library allows to use all available API method
 ## Install
 #### .NET Standart 2.0
 ``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 4.0.1
+PM> NuGet\Install-Package ApiPyrus -Version 4.6.1
 ```
 ## Create instance
 ```C#
