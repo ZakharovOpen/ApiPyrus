@@ -17,14 +17,14 @@ ApiClient apiClient = new ApiClient("login", "apiKey");
 ```C#
 using ApiPyrus.Models.DTOs;
 ...
-PyrusCatalogs catalogs = apiClient.GetСatalogs();
+PyrusCatalogs catalogs = await apiClient.GetСatalogs();
 ```
 ## Create catalog request
 ```C#
 using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Catalogs;
 ...
-Catalog newCatalog = new CreateCatalog("Created new catalog").AddHeaders(new List<string>() { "Name", "LastName" }).AddItems(new List<ValuesList>() { new ValuesList() { Values = new List<string>() { "Pavel", "Zakharov" } } }).Send(apiClient);
+Catalog newCatalog = await  new CreateCatalog("Created new catalog").AddHeaders(new List<string>() { "Name", "LastName" }).AddItems(new List<ValuesList>() { new ValuesList() { Values = new List<string>() { "Pavel", "Zakharov" } } }).Send(apiClient);
 ```
 ![image](https://user-images.githubusercontent.com/88644943/217810505-cef36e03-332f-46ee-a0c5-c93ecb6aa81c.png)
 
@@ -33,28 +33,28 @@ Catalog newCatalog = new CreateCatalog("Created new catalog").AddHeaders(new Lis
 ```C#
 using ApiPyrus.Models.DTOs;
 ...
-bool success = apiClient.DownloadFiles("https://pyrus.com/services/attachment?id=12345678", "C:\\Files\\File1.png");
+bool success = await apiClient.DownloadFiles("https://pyrus.com/services/attachment?id=12345678", "C:\\Files\\File1.png");
 Guid attachmentId = await apiClient.UploadDataAsync("C:\\Files\\File1.png");
 ```
 ## Get tasks request
 ```C#
 using ApiPyrus.Models.DTOs;
 ...
-PyrusTasks pyrusTasks = apiClient.GetTasks(123456, "?fld4=343&fld10=79991112233");
+PyrusTasks pyrusTasks = await apiClient.GetTasks(123456, "?fld4=343&fld10=79991112233");
 ```
 ## Create task
 ```C#
 using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Tasks;
 ...
- PyrusTask createdTask = new CreateTaskByForm(12345).AddField(new ValueField(1, new ValueChoice(5))).AddTasksIds(new List<int> { 1, 2, 3}).Send(apiClient);
+ PyrusTask createdTask = await new CreateTaskByForm(12345).AddField(new ValueField(1, new ValueChoice(5))).AddTasksIds(new List<int> { 1, 2, 3}).Send(apiClient);
 ```
 ## Update task
 ```C#
 using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Tasks;
 ...
- PyrusTask updatedTask = new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
+ PyrusTask updatedTask = await new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
 ```
 ## Field
 Field value can be differents objects, details https://pyrus.com/en/help/api/fields.
