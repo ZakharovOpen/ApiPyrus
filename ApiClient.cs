@@ -231,12 +231,36 @@ namespace ApiPyrus
             return JsonConvert.DeserializeObject<PyrusTaskInfo>(responseString)?.Task;
         }
 
+        /// <summary>
+        /// Получить задачи по форме GET запрос
+        /// </summary>
+        /// <param name="formId"> Id формы </param>>
+        /// <param name="query"> Параметры запроса. Пример: ?fld2=gt10000,lt15000ampfld1=IT%20conference%20in%20Amsterdamampfld3=277ampinclude_archived=y</param>>
+        /// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
+        public async Task<List<PyrusTask>> GetTasks(long formId, string query, string extRequestId = "")
+        {
+            var responseString = await ApiRequest($"/{_apiVersion}/forms/{formId}/register{query}", externalRequestId: extRequestId);
+            return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
+        }
+
+        /// <summary>
+        /// Получить задачи по форме POST запрос
+        /// </summary>
+        /// <param name="formId"> Id формы </param>>
+        /// <param name="bodyQueryParams"> Параметры запроса. Пример: Dictionary&lt;string, object&gt;() { {"fld22", "6565"}, {"include_archived", "y"}} </param>>
+        /// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
+        public async Task<List<PyrusTask>> GetTasks(long formId, Dictionary<string, object> bodyQueryParams, string extRequestId = "")
+        {
+            var responseString = await ApiRequest($"/{_apiVersion}/forms/{formId}/register", "POST", JsonConvert.SerializeObject(bodyQueryParams), externalRequestId: extRequestId);
+            return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
+        }
 
         /// <summary>
         /// Получить задачи по форме
         /// </summary>
         /// <param name="formId"> Id формы </param>>
-        /// <param name="queryParams"> Параметры запроса, id полей формы можно передвать, как int. Пример: Dictionary&lt;object, object&gt;() { {22, "6565"}, {"include_archived", "true"}} </param>>
+        /// <param name="queryParams"> Параметры запроса. Пример: Dictionary&lt;string, object&gt;() { {"fld22", "6565"}, {"include_archived", "y"}} </param>>
+        /// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
         public async Task<List<PyrusTask>> GetTasks(long formId, Dictionary<object, object> queryParams = null, string extRequestId = "")
         {
             var responseString = string.Empty;
@@ -245,7 +269,7 @@ namespace ApiPyrus
             {
                 var intParams = queryParams?.Where(x => int.TryParse(x.Key.ToString(), out var y))?.ToList();
                 if (intParams != null && intParams.Count > 0)
-                    query = "?" + string.Join("&", intParams.Select(x => $"fld{x.Key}={x.Value}"));
+                    query = "?" + string.Join("&", intParams.Select(x => $"{x.Key}={x.Value}"));
 
                 var strParams = queryParams?.Where(x => !intParams.Any(y => y.Key == x.Key))?.ToList();
                 if (strParams != null && strParams.Count > 0)
@@ -257,10 +281,29 @@ namespace ApiPyrus
         /// <summary>
         /// Получить задачи по форме
         /// </summary>
-        public async Task<List<PyrusTask>> GetTasks(long formId, string query, string extRequestId = "")
+        /// <param name="formId"> Id формы </param>>
+        /// <param name="fieldsQueryParams"> Параметры запроса, id полей формы можно передвать. Пример: Dictionary&lt;int, string&gt;() { {22, "6565"}} </param>>
+        /// <param name="includeArchived"> Параметры запроса, вклюать архивированные задачи или нет </param>>
+        /// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
+        public async Task<List<PyrusTask>> GetTasks(long formId, Dictionary<int, string> fieldsQueryParams = null, bool? includeArchived = null, string extRequestId = "")
         {
-            var responseString = await ApiRequest($"/{_apiVersion}/forms/{formId}/register{query}", externalRequestId: extRequestId);
-            return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
+            var responseString = string.Empty;
+            var query = string.Empty;
+            if (fieldsQueryParams != null && fieldsQueryParams.Count > 0)
+            {
+                var intParams = fieldsQueryParams?.Where(x => int.TryParse(x.Key.ToString(), out var y))?.ToList();
+                if (intParams != null && intParams.Count > 0)
+                    query = "?" + string.Join("&", intParams.Select(x => $"fld{x.Key}={x.Value}"));
+
+                var strParams = fieldsQueryParams?.Where(x => !intParams.Any(y => y.Key == x.Key))?.ToList();
+                if (strParams != null && strParams.Count > 0)
+                    query += (string.IsNullOrEmpty(query) ? "?" : "&") + string.Join("&", strParams.Select(x => $"{x.Key}={x.Value}"));
+            }
+            if(includeArchived.HasValue)
+            {
+                query += (string.IsNullOrEmpty(query) ? "?" : "&") + $"include_archived=y";
+            }
+            return await GetTasks(formId, query, extRequestId);
         }
 
         /// <summary>
