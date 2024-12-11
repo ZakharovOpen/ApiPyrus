@@ -121,4 +121,131 @@ using ApiPyrus.Extentions;
   }
 ```
 
+## Example of field parsing
+```C#
+async Task Generate()
+{
+    var tasks = await apiClient.GetTasks(1111, string.Empty);
+    var tasksInfo = new List<Dictionary<string, string>>();
+    foreach (var task in tasks)
+    {
+        var fieldsInfo = new Dictionary<string, string>()
+        {
+            { "TaskId", task.Id.ToString() },
+            { "Created", task.CreateDate.ToString() },
+            { "Closed", task.CloseDate.ToString() }
+        };
+        foreach (var field in task.Fields)
+            GetFieldInfo(field, task.Id, fieldsInfo);
+
+        tasksInfo.Add(fieldsInfo);
+    }
+}
+
+```
+```C#
+void GetFieldInfo(Field field, long taskId, Dictionary<string, string> fieldsInfo)
+{
+    try
+    {
+        if (field.Value == null)
+        {
+            fieldsInfo.Add(field.Name, string.Empty);
+            Console.WriteLine($"Task '{taskId}' field '{field.Name}' value '{field.Type}' is null");
+            return;
+        }
+
+        switch (field.Type)
+        {
+            case FieldTypes.Note:
+            case FieldTypes.Text:
+            case FieldTypes.Phone:
+            case FieldTypes.Time:
+            case FieldTypes.Email:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueString>().String);
+                break;
+            case FieldTypes.DueDate:
+            case FieldTypes.CreationDate:
+            case FieldTypes.Date:
+            case FieldTypes.DueDateTime:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueDate>().Date.ToString());
+                break;
+            case FieldTypes.Money:
+            case FieldTypes.Number:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueNumber>().Number.ToString());
+                break;
+            case FieldTypes.Project:
+                var value = new List<string>();
+
+                foreach (var project in field.GetValue<ValueProject>()?.Projects)
+                    value.Add(project.Name);
+
+                fieldsInfo.Add(field.Name, string.Join(", ", value));
+                break;
+            case FieldTypes.FormLink:
+                fieldsInfo.Add(field.Name, string.Join(", ", field.GetValue<ValueFormLink>().TaskIds));
+                break;
+            case FieldTypes.Title:
+                var title = field.GetValue<ValueTitle>();
+                if (title.Fields != null && title.Fields.Any())
+                {
+                    foreach (var titleField in title.Fields)
+                        GetFieldInfo(titleField, taskId, fieldsInfo);
+                }
+                break;
+            case FieldTypes.MultipleChoice:
+                var multipleChoice = field.GetValue<ValueMultipleChoice>();
+                fieldsInfo.Add(field.Name, string.Join(", ", multipleChoice.ChoiceNames));
+                if (multipleChoice.Fields != null && multipleChoice.Fields.Any())
+                    foreach (var multipleChoiceField in multipleChoice.Fields)
+                        GetFieldInfo(multipleChoiceField, taskId, fieldsInfo);
+                break;
+            case FieldTypes.Table:
+                var table = field.GetValue<ValueTable>();
+                foreach (var row in table.Rows)
+                {
+                    foreach (var cell in row.Cells) 
+                        GetFieldInfo(cell, taskId, fieldsInfo);
+                }
+                break;
+            case FieldTypes.Author:
+            case FieldTypes.Person:
+                var person = field.GetValue<ValuePersone>();
+                fieldsInfo.Add(field.Name, $"{person.LastName} {person.FirstName}");
+                break;
+            case FieldTypes.File:
+                var files = field.GetValue<ValueFiles>();
+                fieldsInfo.Add(field.Name, string.Join(", ", field.GetValue<ValueFiles>().Files.Select(x => x.Name)));
+                break;
+            case FieldTypes.Catalog:
+                fieldsInfo.Add(field.Name, string.Join(", ", field.GetValue<ValueCatalog>().Values));
+                break;
+            case FieldTypes.Checkmark:
+            case FieldTypes.Flag:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueCheckmark>().Checkmark.ToString());
+                break;
+            case FieldTypes.Step:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueIntegerNumber>().IntegerNumber.ToString());
+                break;
+            case FieldTypes.Status:
+                fieldsInfo.Add(field.Name, field.GetValue<ValueStatus>().Status.ToString());
+                break;
+            case FieldTypes.None:
+            default:
+                {
+                    fieldsInfo.Add(field.Name, string.Empty);
+                    var error = field.GetValue<ValueError>().ErrorMessage.ToString();
+                    Console.WriteLine($"Task '{taskId}' field '{field.Name}' parse value '{field.Type}' exeption:\n{error}");
+                    break;
+                }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Task '{taskId}' field '{field.Name}'[{field.Id}] parse value '{field.Type}' exeption:\n{ex}");
+        if(!fieldsInfo.ContainsKey(field.Name))
+            fieldsInfo.Add(field.Name, string.Empty);
+    }
+}
+```
 P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance.
