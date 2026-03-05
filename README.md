@@ -47,14 +47,14 @@ PyrusTasks pyrusTasks = await apiClient.GetTasks(123456, "?fld4=343&fld10=799911
 using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Tasks;
 ...
- PyrusTask createdTask = await new CreateTaskByForm(12345).AddField(new ValueField(1, new ValueChoice(5))).AddTasksIds(new List<int> { 1, 2, 3}).Send(apiClient);
+ PyrusTask createdTask = await new CreateTaskByForm(12345).AddField(new ValueFieldData(1, new ValueChoiceData(5))).AddParentTaskId(1).Send(apiClient);
 ```
 ## Update task
 ```C#
 using ApiPyrus.Models.DTOs;
 using ApiPyrus.Models.Methods.Tasks;
 ...
- PyrusTask updatedTask = await new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
+ PyrusTask updatedTask = await new UpdateTaskByForm(12345).UpdateField(new ValueFieldData(5, new ValueChoiceData(2))).AddText("Text").Send(apiClient);
 ```
 ## Field
 Field value can be differents objects, details https://pyrus.com/en/help/api/fields.
