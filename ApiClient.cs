@@ -168,6 +168,15 @@ namespace ApiPyrus
         }
 
         /// <summary>
+        /// Обновить справочник по id
+        /// </summary>
+        internal async Task<CatalogUpdateInfo> UpdateCatalogDiff(long catalogId, string json, string extRequestId = "")
+        {
+            var responseString = await ApiRequest($"/{_apiVersion}/catalogs/{catalogId}/diff", "POST", json, externalRequestId: extRequestId);
+            return JsonConvert.DeserializeObject<CatalogUpdateInfo>(responseString);
+        }
+
+        /// <summary>
         /// Получить всех сотрудников
         /// </summary>
         public async Task<List<ValuePersone>> GetMembers(string extRequestId = "")
@@ -243,17 +252,22 @@ namespace ApiPyrus
             return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
         }
 
-        /// <summary>
-        /// Получить задачи по форме POST запрос
-        /// </summary>
-        /// <param name="formId"> Id формы </param>>
-        /// <param name="bodyQueryParams"> Параметры запроса. Пример: Dictionary&lt;string, object&gt;() { {"fld22", "6565"}, {"include_archived", "y"}} </param>>
-        /// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
-        public async Task<List<PyrusTask>> GetTasks(long formId, Dictionary<string, object> bodyQueryParams, string extRequestId = "")
-        {
-            var responseString = await ApiRequest($"/{_apiVersion}/forms/{formId}/register", "POST", JsonConvert.SerializeObject(bodyQueryParams), externalRequestId: extRequestId);
-            return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
-        }
+        ///// <summary>
+        ///// Получить задачи по форме POST запрос
+        ///// </summary>
+        ///// <param name="formId"> Id формы </param>>
+        ///// <param name="bodyQueryParams"> Параметры запроса. Пример: Dictionary&lt;string, object&gt;() { {"fld22", "6565"}, {"include_archived", "y"}} </param>>
+        ///// <param name="extRequestId"> Параметры запроса, внешний id запроса </param>>
+        //public async Task<List<PyrusTask>> GetTasks(long formId, Dictionary<string, object> bodyQueryParams, string extRequestId = "")
+        //{
+        //    foreach (var bodyQueryParam in bodyQueryParams)
+        //    {
+        //        if(bodyQueryParam.)
+        //            throw new ArgumentException($"Значение для ключа '{param.Key}' должно быть типа int или decimal.");
+        //    }
+        //    var responseString = await ApiRequest($"/{_apiVersion}/forms/{formId}/register", "POST", JsonConvert.SerializeObject(bodyQueryParams), externalRequestId: extRequestId);
+        //    return JsonConvert.DeserializeObject<PyrusTasks>(responseString)?.Tasks;
+        //}
 
         /// <summary>
         /// Получить задачи по форме

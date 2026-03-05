@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+	<LangVersion>12</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <AssemblyVersion>4.6.1</AssemblyVersion>
-    <FileVersion>4.6.1</FileVersion>
+    <AssemblyVersion>4.7</AssemblyVersion>
+    <FileVersion>4.7</FileVersion>
     <IsPublishable>True</IsPublishable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>ApiPyrus</Title>
@@ -18,7 +19,7 @@
     <PackageTags>pyrus api zakharov pyrus.com PyrusAPI</PackageTags>
     <PackageReleaseNotes>Moved project to Net.Standart 2.0
 Added sended </PackageReleaseNotes>
-    <Version>4.6.1</Version>
+    <Version>4.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
