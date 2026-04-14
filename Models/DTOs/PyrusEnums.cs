@@ -295,7 +295,7 @@ namespace ApiPyrus.Models.DTOs
         {
             var enumMemberAttribute = (EnumMemberAttribute)Attribute.GetCustomAttribute(
                 enumValue.GetType().GetField(enumValue.ToString()), typeof(EnumMemberAttribute));
-            return enumMemberAttribute.Value;
+            return enumMemberAttribute?.Value ?? enumValue.ToString();
         }
         internal static string GetDescription(this Enum value)
         {
