@@ -1,5 +1,6 @@
 ﻿using ApiPyrus.Extentions;
 using ApiPyrus.Models.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,8 +83,11 @@ namespace ApiPyrus.Models.Methods.Catalogs
             if (entity == null)
                 return AddItem(new ValuesList(itemValues));
             else
-                for (int i = 1; i < entity.Values.Count; i++)
+            {
+                var count = Math.Min(entity.Values.Count, itemValues.Count);
+                for (int i = 0; i < count; i++)
                     entity.Values[i] = itemValues[i];
+            }
             return this;
         }
 

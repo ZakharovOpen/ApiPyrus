@@ -363,28 +363,28 @@ namespace ApiPyrus.Models.DTOs
 
         public string GetOnlyReplyCommentText()
         {
-            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || !Text.Contains('\n'))
+            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || string.IsNullOrEmpty(Text) || !Text.Contains('\n'))
                 return Text;
             return Text.Substring(Text.IndexOf('\n') + 1);
         }
 
         public string GetСommentTextForReply()
         {
-            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || !Text.Contains('\n'))
+            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || string.IsNullOrEmpty(Text) || !Text.Contains('\n'))
                 return string.Empty;
             return Text.Substring(0, Text.IndexOf('\n'));
         }
 
         public string GetFormattedTextWithoutReplyComment()
         {
-            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || !FormattedText.Contains("<quote data-noteid"))
+            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || string.IsNullOrEmpty(FormattedText) || !FormattedText.Contains("<quote data-noteid"))
                 return FormattedText;
             return FormattedText.Split(new string[] { "</quote>" }, StringSplitOptions.None).Last();
         }
 
         public string GetСommentFormattedTextForReply()
         {
-            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || !FormattedText.Contains("<quote data-noteid"))
+            if (!ReplyNoteId.HasValue || ReplyNoteId.Value <= 0 || string.IsNullOrEmpty(FormattedText) || !FormattedText.Contains("<quote data-noteid"))
                 return string.Empty;
             return FormattedText.Split(new string[] { "</quote>" }, StringSplitOptions.None).First();
         }
@@ -858,13 +858,13 @@ namespace ApiPyrus.Models.DTOs
             switch (dateTimeFormat)
             {
                 case DateTimeFormatTypes.Full:
-                    ValueData = _valueData.ToString("yyyy-MM-ddThh:mm:ssZ");
+                    ValueData = _valueData.ToString("yyyy-MM-ddTHH:mm:ss'Z'");
                     break;
                 case DateTimeFormatTypes.DateOnly:
                     ValueData = _valueData.ToString("yyyy-MM-dd");
                     break;
                 case DateTimeFormatTypes.TimeOnly:
-                    ValueData = _valueData.ToString("hh:mm");
+                    ValueData = _valueData.ToString("HH:mm");
                     break;
             }
         }
@@ -965,7 +965,7 @@ namespace ApiPyrus.Models.DTOs
         [JsonProperty("url")]
         public string Url { get; set; }
 
-        [JsonProperty("Name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
     }
     public class ValueChannelData : IFieldValueData

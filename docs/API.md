@@ -154,8 +154,7 @@ Response 200:
 
 C# method: `ApiClient.GetMembers()`
 
-### DELETE `/v4/members/{memberId}` — Получить сотрудника по ID
-> Примечание: в коде используется HTTP DELETE для GET-запроса — особенность Pyrus API
+### GET `/v4/members/{memberId}` — Получить сотрудника по ID
 
 C# method: `ApiClient.GetMember(memberId)`
 

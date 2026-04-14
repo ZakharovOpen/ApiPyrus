@@ -71,6 +71,12 @@ ApiPyrus — NuGet-библиотека (.NET Standard 2.0) для работы 
 ### Database
 - Нет БД — чистая HTTP-клиентская библиотека
 
+### Pre-commit checklist
+Перед каждым коммитом:
+1. **Версия** — поднять `Version`, `AssemblyVersion`, `FileVersion` в `ApiPyrus.csproj` и обновить `PackageReleaseNotes`
+2. **CHANGELOG** — добавить запись с датой и списком изменений
+3. **Документация** — обновить затронутые файлы в `docs/` (API.md, DATA_MODEL.md, USAGE.md и т.д.) если изменились публичные API, DTO, enums или builders
+
 ## Commands
 ```bash
 # Сборка (MSBuild из Visual Studio, НЕ dotnet build)

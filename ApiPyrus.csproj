@@ -5,8 +5,8 @@
 	<LangVersion>12</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <AssemblyVersion>4.7</AssemblyVersion>
-    <FileVersion>4.7</FileVersion>
+    <AssemblyVersion>4.8</AssemblyVersion>
+    <FileVersion>4.8</FileVersion>
     <IsPublishable>True</IsPublishable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>ApiPyrus</Title>
@@ -17,9 +17,8 @@
     <PackageIcon>pyrus_icon.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>pyrus api zakharov pyrus.com PyrusAPI</PackageTags>
-    <PackageReleaseNotes>Moved project to Net.Standart 2.0
-Added sended </PackageReleaseNotes>
-    <Version>4.7</Version>
+    <PackageReleaseNotes>Fixed critical bugs: Auth re-auth, GetMember HTTP method, DateTime 24h format, AddScheduledDate, thread-safe GetJson. Fixed medium bugs: includeArchived, JsonProperty casing, null checks, IndexOutOfRange.</PackageReleaseNotes>
+    <Version>4.8</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />

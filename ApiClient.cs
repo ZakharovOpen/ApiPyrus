@@ -98,8 +98,8 @@ namespace ApiPyrus
                     returnText = await response.Content.ReadAsStringAsync();
                     if (!isAuthRequest && response.StatusCode == HttpStatusCode.Unauthorized)
                     {
-                        Auth();
-                        returnText = await ApiRequest(additionalUrl, method, body, false, externalRequestId);
+                        await Auth();
+                        returnText = await ApiRequest(additionalUrl, method, body, true, externalRequestId);
                     }
                     else if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -190,7 +190,7 @@ namespace ApiPyrus
         /// </summary>
         public async Task<ValuePersone> GetMember(long memberId, string extRequestId = "")
         {
-            var responseString = await ApiRequest($"/{_apiVersion}/members/{memberId}", "DELETE", externalRequestId: extRequestId);
+            var responseString = await ApiRequest($"/{_apiVersion}/members/{memberId}", externalRequestId: extRequestId);
             return JsonConvert.DeserializeObject<ValuePersone>(responseString);
         }
 
@@ -313,7 +313,7 @@ namespace ApiPyrus
                 if (strParams != null && strParams.Count > 0)
                     query += (string.IsNullOrEmpty(query) ? "?" : "&") + string.Join("&", strParams.Select(x => $"{x.Key}={x.Value}"));
             }
-            if(includeArchived.HasValue)
+            if(includeArchived.HasValue && includeArchived.Value)
             {
                 query += (string.IsNullOrEmpty(query) ? "?" : "&") + $"include_archived=y";
             }
@@ -435,7 +435,7 @@ namespace ApiPyrus
         /// </summary>
         public async Task<PyrusTask> AddScheduledDate(long taskId, string scheduledDate)
         {
-            return await new UpdateTaskByForm(taskId).ScheduledDatetimeUtc(scheduledDate).Send(this);
+            return await new UpdateTaskByForm(taskId).ScheduledDate(scheduledDate).Send(this);
         }
 
         /// <summary>

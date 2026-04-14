@@ -1,3 +1,17 @@
+[4.8] - 14.04.2026
+Fixed
+- Auth() without await on 401 re-auth — caused StackOverflow
+- GetMember used HTTP DELETE instead of GET — was deleting members
+- DateTime format hh→HH — 12-hour times shifted by 12 hours after noon
+- AddScheduledDate called ScheduledDatetimeUtc instead of ScheduledDate
+- GetJson race condition on JsonConvert.DefaultSettings — thread safety
+- Infinite recursion on repeated 401 — now stops after one retry
+- includeArchived:false still added include_archived=y to query
+- ValueAttachmentData [JsonProperty("Name")] → "name"
+- IndexOutOfRangeException in UpdateCatalog.AddOrUpdateItem
+- NullReferenceException in Comment methods when Text/FormattedText is null
+- NullReferenceException in GetEnumMemberValue when [EnumMember] missing
+
 [3.1.0] [2.1.0] - 01.05.2023
 Added
 - method to get 'value' object(IValue) for feilds and cells

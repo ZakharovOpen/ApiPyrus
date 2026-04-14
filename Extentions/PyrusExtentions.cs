@@ -17,17 +17,11 @@ namespace ApiPyrus.Extentions
                 ReferenceLoopHandling = referenceLoopHandling
             };
 
-            JsonConvert.DefaultSettings = () => settings;
-            var json = JsonConvert.SerializeObject(entityForJson);
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings();
-            return json;
+            return JsonConvert.SerializeObject(entityForJson, settings);
         }
         public static string GetJson<T>(this T entityForJson, JsonSerializerSettings settings)
         {
-            JsonConvert.DefaultSettings = () => settings;
-            var json = JsonConvert.SerializeObject(entityForJson);
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings();
-            return json;
+            return JsonConvert.SerializeObject(entityForJson, settings);
         }
         public static Field GetFieldById(this PyrusTask task, long fieldId)
            => task.Fields.GetFieldById(fieldId);
