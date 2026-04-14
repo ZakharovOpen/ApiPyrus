@@ -1,124 +1,253 @@
- ```.NET STANDART 2.0```
-[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/4.6.1)
+`.NET Standard 2.0`
+[![NuGet](https://zakharovopen.ru/imgs/ApiPyrus_net_standart.svg)](https://www.nuget.org/packages/ApiPyrus/)
+
 # ApiPyrus
-This is C# Pyrus API client. This library allows to use all available API methods.
+
+C# client for [Pyrus REST API](https://pyrus.com/en/help/api). Covers tasks, catalogs, members, roles, announcements, files, lists, and webhooks.
+
 ## Install
-#### .NET Standart 2.0
-``` bash
-PM> NuGet\Install-Package ApiPyrus -Version 4.6.1
+
 ```
-## Create instance
-```C#
+PM> NuGet\Install-Package ApiPyrus
+```
+
+## Quick start
+
+```csharp
 using ApiPyrus;
-...
-ApiClient apiClient = new ApiClient("login", "apiKey");
-```
-## Get catalogs request
-```C#
 using ApiPyrus.Models.DTOs;
-...
-PyrusCatalogs catalogs = await apiClient.GetСatalogs();
+
+using var apiClient = new ApiClient("login@company.com", "your-api-key");
+
+// Read tasks
+List<PyrusTask> tasks = await apiClient.GetTasks(formId, "?fld4=value");
+
+// Create a task
+using ApiPyrus.Models.Methods.Tasks;
+
+PyrusTask task = await new CreateTaskByForm(formId)
+    .AddField(new ValueFieldData(1, "Hello"))
+    .AddField(new ValueFieldData(2, new ValueChoiceData(5)))
+    .Send(apiClient);
 ```
-## Create catalog request
-```C#
-using ApiPyrus.Models.DTOs;
+
+Authentication is automatic &mdash; a Bearer token is obtained on the first request and refreshed on 401.
+
+## Configuration
+
+```csharp
+var apiClient = new ApiClient(
+    login: "login@company.com",
+    key: "your-api-key",
+    url: "https://api.pyrus.com",          // custom for on-premise
+    apiVersion: "v4",
+    requestsTimeOut: TimeSpan.FromSeconds(30),
+    ignoreSslSecurityErros: false           // true for self-signed certs
+);
+
+// Event-based logging (no ILogger dependency)
+apiClient.GotInfoLog  += msg => Console.WriteLine(msg);
+apiClient.GotErrorLog += msg => Console.Error.WriteLine(msg);
+```
+
+## Read methods
+
+```csharp
+// Tasks
+PyrusTask task             = await apiClient.GetTaskInfoById(taskId);
+List<PyrusTask> tasks      = await apiClient.GetTasks(formId, "?fld4=value&include_archived=y");
+List<PyrusTask> tasks      = await apiClient.GetTasks(formId,
+    new Dictionary<int, string> { { 4, "value" } }, includeArchived: true);
+List<PyrusTask> inbox      = await apiClient.GetInbox(itemCount: 50);
+
+// Forms, catalogs, members, roles, lists, announcements
+List<Form> forms           = await apiClient.GetFormsTemplates();
+List<Catalog> catalogs     = await apiClient.GetCatalogs();
+Catalog catalog            = await apiClient.GetCatalog(catalogId);
+List<ValuePersone> members = await apiClient.GetMembers();
+ValuePersone profile       = await apiClient.GetProfile();
+List<Role> roles           = await apiClient.GetRoles();
+List<PyrusList> lists      = await apiClient.GetLists();
+List<PyrusTask> listTasks  = await apiClient.GetListTasks(listId, from, to);
+List<AnnouncementInfo> ann = await apiClient.GetAnnouncements();
+
+// Files
+Guid fileId  = await apiClient.UploadFile(@"C:\file.png");
+bool ok      = await apiClient.DownloadFile(attachmentUrl, @"C:\out.png");
+Stream stream = await apiClient.DownloadFile(attachmentUrl);
+```
+
+## Write methods (Fluent Builders)
+
+All write operations use a fluent builder pattern: `new Builder(...).Method(...).Send(apiClient)`.
+
+### Tasks
+
+```csharp
+using ApiPyrus.Models.Methods.Tasks;
+
+// Create task by form
+PyrusTask task = await new CreateTaskByForm(formId)
+    .AddField(new ValueFieldData(1, "text value"))
+    .AddField(new ValueFieldData(2, new ValueChoiceData(5)))
+    .AddField(new ValueFieldData(3, new ValueItemData(catalogItemId)))
+    .AddField(new ValueFieldData(4, DateTime.Now, DateTimeFormatTypes.DateOnly))
+    .AddField(new ValueFieldData(5, 1500.50m))
+    .AddField(new ValueFieldData(6, CheckmarkTypes.Checked))
+    .AddSubscribers(new List<ValueIdData> { new ValueIdData(userId) })
+    .AddApprovals(approvalSteps)
+    .FillDefaults()
+    .Send(apiClient);
+
+// Update / comment
+PyrusTask updated = await new UpdateTaskByForm(taskId)
+    .AddText("Comment text")
+    .UpdateField(new ValueFieldData(1, "new value"))
+    .AddAttachments(new List<Guid> { fileGuid })
+    .AddChannel(ChannelTypes.Email)
+    .AddApprovalChoice(ApprovalTypes.Approved)
+    .SkipNotification()
+    .Send(apiClient);
+
+// Close / Reopen (inherit all UpdateTaskByForm methods)
+await new CloseTaskByForm(taskId).AddText("Done").Send(apiClient);
+await new ReopenTaskByForm(taskId).AddText("Reopening").Send(apiClient);
+
+// Simple tasks
+PyrusTask simple = await new CreateSimpleTask()
+    .AddSubject("Subject")
+    .AddText("Description")
+    .AddDueDate("2025-06-01")
+    .AddResponsible(new ValueIdData(userId))
+    .Send(apiClient);
+```
+
+### Catalogs
+
+```csharp
 using ApiPyrus.Models.Methods.Catalogs;
-...
-Catalog newCatalog = await  new CreateCatalog("Created new catalog").AddHeaders(new List<string>() { "Name", "LastName" }).AddItems(new List<ValuesList>() { new ValuesList() { Values = new List<string>() { "Pavel", "Zakharov" } } }).Send(apiClient);
-```
-![image](https://user-images.githubusercontent.com/88644943/217810505-cef36e03-332f-46ee-a0c5-c93ecb6aa81c.png)
 
+// Create
+Catalog cat = await new CreateCatalog("My catalog")
+    .AddHeaders(new List<string> { "Name", "Email" })
+    .AddItem(new ValuesList(new List<string> { "Pavel", "p@mail.com" }))
+    .Send(apiClient);
 
-## Attachments
-```C#
-using ApiPyrus.Models.DTOs;
-...
-bool success = await apiClient.DownloadFiles("https://pyrus.com/services/attachment?id=12345678", "C:\\Files\\File1.png");
-Guid attachmentId = await apiClient.UploadDataAsync("C:\\Files\\File1.png");
-```
-## Get tasks request
-```C#
-using ApiPyrus.Models.DTOs;
-...
-PyrusTasks pyrusTasks = await apiClient.GetTasks(123456, "?fld4=343&fld10=79991112233");
-```
-## Create task
-```C#
-using ApiPyrus.Models.DTOs;
-using ApiPyrus.Models.Methods.Tasks;
-...
- PyrusTask createdTask = await new CreateTaskByForm(12345).AddField(new ValueField(1, new ValueChoice(5))).AddTasksIds(new List<int> { 1, 2, 3}).Send(apiClient);
-```
-## Update task
-```C#
-using ApiPyrus.Models.DTOs;
-using ApiPyrus.Models.Methods.Tasks;
-...
- PyrusTask updatedTask = await new UpdateTaskByForm(12345).UpdateField(new ValueField(5, new ValueChoice(2))).AddText("Text").Send(apiClient);
-```
-## Field
-Field value can be differents objects, details https://pyrus.com/en/help/api/fields.
-The field has the following methods to get it:
-```C#
-public T GetValue<T>() where T : IValue
-public IValue GetValueObject()
-```
-## IValue
-ValueClasses for fields types [enum FieldTypes]:
- - ValueString [Text, Phone, Time, Note, Email]
- - ValueDate [DueDate, CreationDate, Date, DueDateTime]
- - ValueNumber [Money, Number]
- - ValueProject [Project]
- - ValueFormLink [FormLink]
- - ValueTitle [Title]
- - ValueMultipleChoice [MultipleChoice]
- - ValueTable [Table]
- - ValuePersone [Author, Person]
- - ValueFiles [File]
- - ValueCatalog [Catalog]
- - ValueCheckmark [Checkmark, Flag]
- - ValueIntegerNumber [Step]
- - ValueStatus [Status]
- If a conversion error occurs, then 'ValueError'
+// Update (full replace)
+var info = await new UpdateCatalog(catalogId, apiClient)
+    .SetCatalog()   // fetches current state from API
+    .AddItem(new ValuesList(new List<string> { "New", "Row" }))
+    .Send();
 
-## Extentions
-Extension methods have been added to the library.
-```C#
- public static string GetJson<T>(this T entityForJson, JsonSerializerSettings settings)
- public static string GetJson<T>(this T entityForJson, Formatting jsonFormatting = Formatting.Indented, NullValueHandling nullValueHandling = NullValueHandling.Ignore, DefaultValueHandling defaultValueHandling = DefaultValueHandling.Ignore, ReferenceLoopHandling referenceLoopHandling = ReferenceLoopHandling.Ignore)
- 
- public static Field GetFieldById(this PyrusTask task, long fieldId)
- public static Field GetFieldById(this List<Field> fields, long fieldId)
- public static bool TryGetFieldById(this PyrusTask task, long fieldId, out Field field)
- public static bool TryGetFieldById(this List<Field> fields, long fieldId, out Field field)
-
- public static List<Field> GetFieldsByType(this PyrusTask task, FieldTypes type)
- public static List<Field> GetFieldsByType(this List<Field> fields, FieldTypes type)
- public static bool TryGetFieldsByType(this PyrusTask task, FieldTypes type, out List<Field> fields)
- public static bool TryGetFieldsByType(this List<Field> fields, FieldTypes type, out List<Field> fieldsByType)
-        
-
+// Update (diff: upsert + delete)
+var diff = await new UpdateCatalogItems(catalogId, apiClient)
+    .AddItemToUpsert(new ValuesList(new List<string> { "key", "val" }))
+    .AddItemToDelete("old-key")
+    .Send();
 ```
-Example:
-```C#
+
+### Members & Roles
+
+```csharp
+using ApiPyrus.Models.Methods.Members;
+using ApiPyrus.Models.Methods.Roles;
+
+await new CreateMember("John", "Doe", "john@mail.com").Send(apiClient);
+await new UpdateMember(memberId, firstName: "Jane").Send(apiClient);
+await new BlockMember(memberId).Send(apiClient);
+
+await new CreateRole("Managers", new List<long> { id1, id2 }).Send(apiClient);
+await new UpdateRole(roleId, addMembersIds: new List<long> { id3 }).Send(apiClient);
+```
+
+### Announcements
+
+```csharp
+using ApiPyrus.Models.Methods.Announcements;
+
+await new CreateAnnouncement().AddText("Hello everyone!").Send(apiClient);
+await new CommentAnnouncement(annId).AddText("Comment").Send(apiClient);
+```
+
+## Formatted text
+
+Pass `formatedText: true` to send HTML via the `formatted_text` field.
+
+```csharp
+await new UpdateTaskByForm(taskId)
+    .AddText("<b>Important!</b> Status: <mark data-color=\"green\">Done</mark>", formatedText: true)
+    .Send(apiClient);
+```
+
+Supported tags: `<b>`, `<i>`, `<s>`, `<code>`, `<br/>`, `<div data-type="heading">`, `<q>`, `<mark data-color="red|yellow|green|blue">`, `<ul><li>`, `<ol><li>`, `<a href="...">`, `<button>`.
+
+Reply to a comment (quote is built automatically):
+
+```csharp
+await new UpdateTaskByForm(taskId)
+    .ReplyComment(replyNoteId, "quoted text", "my reply")
+    .Send(apiClient);
+```
+
+## Working with fields
+
+```csharp
 using ApiPyrus.Extentions;
-...
-  PyrusTask task = new PyrusTask();
-  var taskJson = task.GetJson();
-  var fieldsJson = task.Fields.GetJson(Formatting.None);
-...
-  if(task.Fields.TryGetFieldById(3, out Field field))
-  {
-     Console.WriteLine(field.GetValue<ValueString>());
-  }
-...
-  if (task.Fields.TryGetFieldsByType(FieldTypes.Text, out List<Field> fields))
-  {
-    foreach (var field in fields)
-    {
-        Console.WriteLine(field.GetValue<ValueString>());
-    }
-  }
+
+// Get field by ID (searches nested Title / MultipleChoice fields too)
+if (task.TryGetFieldById(fieldId, out Field field))
+    Console.WriteLine(field.GetValue<ValueString>().String);
+
+// Get fields by type
+if (task.TryGetFieldsByType(FieldTypes.Text, out List<Field> fields))
+    foreach (var f in fields)
+        Console.WriteLine(f.GetValue<ValueString>().String);
 ```
 
-P.S. There are also methods for working with simple tasks, members, catalogs, announcements, roles. Located in the "ApiPyrus.Models.Methods" namespace and in the "apiClient" instance.
+### IValue types
+
+| FieldTypes | IValue class | Property |
+|---|---|---|
+| Text, Phone, Time, Note, Email | `ValueString` | `.String` |
+| Date, DueDate, DueDateTime, CreationDate | `ValueDate` | `.Date` |
+| Money, Number | `ValueNumber` | `.Number` |
+| Step | `ValueIntegerNumber` | `.IntegerNumber` |
+| Project | `ValueProject` | `.Projects` |
+| FormLink | `ValueFormLink` | `.TaskIds` |
+| Title | `ValueTitle` | `.Checkmark`, `.Fields` |
+| MultipleChoice | `ValueMultipleChoice` | `.ChoiceIds`, `.ChoiceNames` |
+| Table | `ValueTable` | `.Rows[].Cells[]` |
+| Author, Person | `ValuePersone` | `.Id`, `.FirstName`, `.Email` |
+| File | `ValueFiles` | `.Files[]` |
+| Catalog | `ValueCatalog` | `.ItemId`, `.Values` |
+| Checkmark, Flag | `ValueCheckmark` | `.Checkmark` |
+| Status | `ValueStatus` | `.Status` |
+
+## Scheduling
+
+```csharp
+await apiClient.AddScheduledDate(taskId, "2025-06-01");           // date only
+await apiClient.AddScheduledDatetimeUtc(taskId, "2025-06-01T10:00:00Z"); // UTC
+await apiClient.CancelSchedule(taskId);
+```
+
+## Webhook signature verification
+
+```csharp
+bool valid = apiClient.CheckSig(requestBody, xPyrusSigHeader, botSecret);
+var update = JsonConvert.DeserializeObject<PyrusUpdates>(requestBody);
+```
+
+## JSON serialization
+
+```csharp
+using ApiPyrus.Extentions;
+
+string json = task.GetJson();                              // pretty, no nulls
+string json = task.Fields.GetJson(Formatting.None);        // compact
+string json = entity.GetJson(customJsonSerializerSettings);
+```
+
+## License
+
+MIT
